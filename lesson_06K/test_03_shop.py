@@ -1,12 +1,17 @@
+import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-driver = webdriver.Firefox()
-driver.implicitly_wait(10)
 
-try:
+def test_saucedemo_purchase():
+    # Инициализация драйвера
+    driver = webdriver.Firefox()
+    # Неявное ожидание
+    driver.implicitly_wait(10)
+
+    # Переход на сайт
     driver.get("https://www.saucedemo.com/")
 
     # Авторизация
@@ -39,13 +44,12 @@ try:
     total_amount_element = wait.until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[data-test="total-label"]')))
 
-    # Очищаем текст: получаем "Total: $58.29" -> берем вторую часть "$58.29"
+    # Извлекаем итоговую сумму
     total_amount_text = total_amount_element.text.split(': ')[1]
 
     expected_total = "$58.29"
+
+    # В pytest assert вызовет понятную ошибку с деталями сравнения
     assert total_amount_text == expected_total, f"Ожидалось: {expected_total}, получено: {total_amount_text}"
 
-    print(f"Тест пройден! Итоговая сумма: {total_amount_text}")
-
-finally:
     driver.quit()
